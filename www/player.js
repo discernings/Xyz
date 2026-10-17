@@ -58,6 +58,7 @@
     q('#plShuf').classList.toggle('on', P.shuf);
     q('#plRep').classList.toggle('on', P.rep !== 'off');
     q('#plDur').textContent = fmt(P.dur);
+    window.dispatchEvent(new Event('lumim-player'));
     const t = P.track;
     q('#plHeart').classList.toggle('on', !!(t && S.tracks.some(x => x.url && x.url === t.url)));
   }
@@ -184,8 +185,8 @@
     if (t.kind === 'YOUTUBE') { const y = ytOf(t); if (y) window.Player.play({ title: t.title, kind: 'YOUTUBE', yt: y, url: t.url, src: t.src }); }
     else if (t.kind === 'SPOTIFY') { const m = (t.url || t.src || '').match(/(track|album|playlist|episode|show|artist)\/(\w+)/); if (m) window.Player.play({ title: t.title, kind: 'SPOTIFY', uri: 'spotify:' + m[1] + ':' + m[2], url: t.url, src: t.src }); }
     else alert('SoundCloud links are not supported in the new player.');
-    go('home');
   };
+  window.PS = P;
   window.stop = () => { if (P.kind === 'yt') ytCmd('pauseVideo'); else if (P.kind === 'sp') call('/me/player/pause', 'PUT').catch(() => {}); P.playing = false; ui(); };
   ui();
 })();
