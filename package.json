@@ -1,0 +1,17 @@
+{
+  "name": "lumim",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lumim - personal notes by V",
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/browser": "^6.0.0",
+    "@capacitor/core": "^6.2.0",
+    "cordova-plugin-background-mode": "^0.7.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0"
+  }
+}
