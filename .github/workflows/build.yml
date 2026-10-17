@@ -1,1 +1,56 @@
-amém
+name: Build Lumim APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Render icons
+        run: |
+          for f in icon-only icon-foreground icon-background; do
+            rsvg-convert -w 1024 -h 1024 resources/$f.svg -o resources/$f.png
+          done
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Generate app icons
+        run: npx @capacitor/assets generate --android --assetPath resources
+
+      - name: Allow foreground service (background music)
+        run: sed -i 's/targetSdkVersion = 34/targetSdkVersion = 33/' android/variables.gradle
+
+      - name: Sync
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Lumim-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
