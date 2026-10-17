@@ -20,17 +20,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Install tools
-        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
-
       - name: Install dependencies
         run: npm install
-
-      - name: Render icons
-        run: |
-          for f in icon-only icon-foreground icon-background; do
-            rsvg-convert -w 1024 -h 1024 resources/$f.svg -o resources/$f.png
-          done
 
       - name: Add Android platform
         run: npx cap add android
