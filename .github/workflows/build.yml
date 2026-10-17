@@ -26,8 +26,18 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
+      - name: Add login redirect (deep link)
+        run: |
+          sed -i 's#</activity>#<intent-filter><action android:name="android.intent.action.VIEW"/><category android:name="android.intent.category.DEFAULT"/><category android:name="android.intent.category.BROWSABLE"/><data android:scheme="com.v.lumim"/></intent-filter></activity>#' android/app/src/main/AndroidManifest.xml
+
       - name: Generate app icons
         run: npx @capacitor/assets generate --android --assetPath resources
+
+      - name: Crisp splash screen (Android 12+)
+        run: |
+          mkdir -p android/app/src/main/res/drawable-nodpi
+          cp resources/icon-foreground.png android/app/src/main/res/drawable-nodpi/splash_leaf.png
+          sed -i 's#\(<style name="AppTheme.NoActionBarLaunch"[^>]*>\)#\1<item name="windowSplashScreenBackground">\#ffffff</item><item name="windowSplashScreenAnimatedIcon">@drawable/splash_leaf</item>#' android/app/src/main/res/values/styles.xml
 
       - name: Allow foreground service (background music)
         run: sed -i 's/targetSdkVersion = 34/targetSdkVersion = 33/' android/variables.gradle
