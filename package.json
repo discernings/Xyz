@@ -7,8 +7,7 @@
     "@capacitor/android": "^6.2.0",
     "@capacitor/app": "^6.0.0",
     "@capacitor/browser": "^6.0.0",
-    "@capacitor/core": "^6.2.0",
-    "cordova-plugin-background-mode": "^0.7.3"
+    "@capacitor/core": "^6.2.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
