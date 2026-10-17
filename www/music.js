@@ -76,7 +76,7 @@
       row.innerHTML = '<div class="t"><b></b><small></small></div><button class="pl">&#9654;</button><button class="sv">+</button>';
       row.querySelector('b').textContent = it.title;
       row.querySelector('small').textContent = it.kind + (it.sub ? ' - ' + it.sub : '');
-      row.querySelector('.pl').onclick = () => { window.Player.play(it); go('home'); };
+      row.querySelector('.pl').onclick = () => { window.Player.play(it); };
       row.querySelector('.sv').onclick = e => { S.tracks.push({ id: uid(), url: it.url, title: it.title, kind: it.kind, src: it.src }); save(); renderTracks(); e.target.textContent = '\u2713'; };
       $r.appendChild(row);
     });

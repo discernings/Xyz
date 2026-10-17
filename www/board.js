@@ -81,7 +81,6 @@ html,body{background:#000}
       const g = geo(l); if (!g) return;
       const P = (c1, c2, w, o, f) => {
         const p = mk('path', { d: 'M' + g.pa.x + ' ' + g.pa.y + 'C' + c1.x + ' ' + c1.y + ' ' + c2.x + ' ' + c2.y + ' ' + g.pb.x + ' ' + g.pb.y, fill: 'none', stroke: '#fff', 'stroke-width': w, 'stroke-opacity': o, 'stroke-linecap': 'round' });
-        if (f) p.setAttribute('filter', 'url(#gb)');
         svg.appendChild(p);
       };
       const dx = g.pb.x - g.pa.x, dy = g.pb.y - g.pa.y, d = Math.hypot(dx, dy) || 1;
@@ -101,7 +100,7 @@ html,body{background:#000}
       const g = geo(l); if (!g) return;
       [g.pa, g.pb].forEach(p => {
         const v = p.dx !== 0;
-        h.appendChild(mk('ellipse', { cx: p.x, cy: p.y, rx: v ? 5 : 18, ry: v ? 18 : 5, fill: '#fff', filter: 'url(#gb)' }));
+        h.appendChild(mk('ellipse', { cx: p.x, cy: p.y, rx: v ? 5 : 18, ry: v ? 18 : 5, fill: '#fff', 'fill-opacity': 0.22 }));
         h.appendChild(mk('ellipse', { cx: p.x, cy: p.y, rx: v ? 1.6 : 10, ry: v ? 10 : 1.6, fill: '#fff' }));
       });
       const ring = mk('circle', { cx: g.mid.x, cy: g.mid.y, r: 6, fill: '#000', stroke: '#fff', 'stroke-width': 1.5 });
