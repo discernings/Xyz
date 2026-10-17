@@ -7,12 +7,10 @@
 .pad{padding-bottom:110px!important}
 #top span:first-child{cursor:pointer;gap:8px}
 #top img{width:11px;height:13px;filter:invert(1)}
-.notch{width:136px!important;height:136px!important;bottom:-68px!important;cursor:pointer}
-.notch div{width:90px!important;height:108px!important;position:relative}
-.notch canvas{display:none;width:100%;height:100%}
+.notch{cursor:pointer}
+.notch canvas{display:none;width:36px;height:44px;margin:-2px auto 0}
 .notch.pl canvas{display:block}
 .notch.pl img{display:none}
-.tag{margin-top:92px!important}
 /* player in the app's black/white language */
 .plc{background:#0b0b0b!important;border:1px solid rgba(255,255,255,.5)!important;border-radius:22px!important;box-shadow:0 0 0 5px #000,0 0 0 6px rgba(255,255,255,.16)!important;font-family:'Space Mono',ui-monospace,monospace!important;color:#f4f4f2!important;margin:30px 18px 0!important;position:relative}
 .plc button{background:#000!important;border:1px solid rgba(255,255,255,.6)!important;color:#f4f4f2!important}
@@ -86,10 +84,10 @@
   window.go = v => { _go(v); sync(); };
 
   /* ASCII pulsing leaf */
-  const cols = 24, rows = 29, RAMP = ' .:-=+*#%@';
+  const cols = 18, rows = 22, RAMP = ' .:-=+*#%@';
   const cvs = document.createElement('canvas');
   const dpr = window.devicePixelRatio || 1;
-  cvs.width = 92 * dpr; cvs.height = 111 * dpr;
+  cvs.width = 36 * dpr; cvs.height = 44 * dpr;
   q('.notch div').appendChild(cvs);
   const ctx = cvs.getContext('2d');
   let A = null;
