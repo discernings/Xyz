@@ -115,7 +115,6 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:
     <div class="notch"><div><img class="lf-img" src="leaf.png" alt=""></div></div>
   </div>
   <p class="tag">REMEMBER EVERYTHING.<br>CONNECT IDEAS.<br>PLAY WHAT YOU LOVE.</p>
-  <div class="year" id="year"></div>
   <div class="stats">
     <div class="tk"><div class="bar"><span>LUMIM</span><span>01</span></div><div class="n disp" id="sN">0</div><div class="l">NOTES</div></div>
     <div class="tk"><div class="bar"><span>LUMIM</span><span>02</span></div><div class="n disp" id="sL">0</div><div class="l">LINKS</div></div>
@@ -182,7 +181,6 @@ function stats() {
   $('#sL').textContent = S.links.length;
   $('#sT').textContent = S.tracks.length;
 }
-$('#year').textContent = new Date().getFullYear();
 
 /* NAV */
 function go(v) {
@@ -386,7 +384,6 @@ function bg() {
   bgOn = true;
   try {
     b.setDefaults({ title: 'Lumim', text: 'Music is playing', icon: 'ic_launcher', color: '000000', hidden: false, silent: false });
-    b.enable();
     b.on('activate', () => b.disableWebViewOptimizations());
   } catch (e) {}
 }
@@ -395,5 +392,8 @@ window.addEventListener('load', () => setTimeout(bg, 1500));
 
 stats(); renderBoard(); renderTracks();
 </script>
+<script src="config.js"></script>
+<script src="music.js"></script>
+<script src="board.js"></script>
 </body>
 </html>
