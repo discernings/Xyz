@@ -1,1 +1,8 @@
-
+{
+  "appId": "com.v.lumim",
+  "appName": "Lumim",
+  "webDir": "www",
+  "backgroundColor": "#050505",
+  "server": { "androidScheme": "https" },
+  "android": { "backgroundColor": "#050505" }
+}
