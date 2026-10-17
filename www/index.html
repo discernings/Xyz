@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#050505">
+<title>Lumim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#050505;--fg:#f4f4f2;--mut:#8a8a8a;--line:#2a2a2a;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:'Space Mono',ui-monospace,monospace;font-size:12px;overscroll-behavior:none}
+.disp{font-family:'Anton','Impact',sans-serif;font-weight:400;text-transform:uppercase}
+.lf-img{width:100%;height:100%;object-fit:contain;filter:invert(1);display:block}
+
+#top{position:fixed;top:0;left:0;right:0;z-index:30;height:calc(40px + var(--sat));padding:var(--sat) 14px 0;display:flex;justify-content:space-between;align-items:center;background:#161616;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.12em}
+#top span{display:flex;align-items:center;gap:6px}
+#top i{width:9px;height:9px;border:1px solid var(--fg);border-radius:50%;display:inline-block}
+
+.view{position:fixed;left:0;right:0;top:calc(40px + var(--sat));bottom:calc(58px + var(--sab));overflow:auto;display:none}
+.view.active{display:block}
+#board.active{display:flex;flex-direction:column;overflow:hidden}
+
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:8px 12px calc(8px + var(--sab));background:var(--bg);display:flex}
+#nav button{flex:1;height:40px;background:none;color:var(--fg);border:1px solid var(--fg);font:inherit;font-size:11px;letter-spacing:.14em}
+#nav button+button{border-left:0}
+#nav button.on{background:var(--fg);color:#000}
+
+/* HOME */
+.hero{position:relative;background:var(--fg);color:#000;border-radius:0 0 28px 28px;padding:26px 18px 64px;text-align:center}
+.hero small{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.2em}
+.hero small i{flex:1;height:2px;background:#000}
+.hero h1{margin:14px 0 4px;font-size:32vw;line-height:.95}
+.seg{display:flex;border:1px solid currentColor;font-size:10px;letter-spacing:.14em;margin:14px auto 0;width:max-content}
+.seg span{padding:5px 12px}
+.seg .on{background:#000;color:#fff}
+.notch{position:absolute;left:50%;bottom:-42px;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;background:#000;box-shadow:0 0 0 10px var(--bg);display:grid;place-items:center;color:#fff}
+.notch div{width:40px;height:40px}
+.tag{text-align:center;margin:64px 24px 0;font-size:11px;letter-spacing:.06em;line-height:1.7}
+.year{font-family:'Anton',Impact,sans-serif;font-size:34vw;line-height:1;padding:0 18px;margin-top:28px;white-space:nowrap;background:linear-gradient(90deg,#fff 0%,#555 68%,rgba(255,255,255,.05));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 14px 10px}
+.tk{border:1px solid var(--line);border-radius:14px;background:#141414;overflow:hidden}
+.tk .bar{background:#222;padding:6px 10px;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;color:#bbb}
+.tk .n{font-size:42px;line-height:1;padding:14px 10px 4px}
+.tk .l{padding:0 10px 12px;font-size:9px;letter-spacing:.14em;color:var(--mut)}
+.code{height:26px;margin:4px 14px 0;background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 5px,#fff 5px 6px,transparent 6px 10px);opacity:.8}
+.bk{display:flex;gap:8px;padding:16px 14px}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 24px;font-size:10px;letter-spacing:.14em;color:var(--mut)}
+.foot div{width:20px;height:20px}
+
+.btn{background:none;border:1px solid var(--fg);color:var(--fg);font:inherit;font-size:10px;letter-spacing:.14em;padding:9px 12px;flex:1}
+.btn.on,.btn.inv{background:var(--fg);color:#000}
+
+/* BOARD */
+.tools{display:flex;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);align-items:center}
+.tools .btn{flex:none}
+.hint{margin-left:auto;font-size:9px;color:var(--mut);text-align:right}
+.bscroll{flex:1;overflow:auto}
+#canvas{position:relative;width:2400px;height:2400px;background-image:radial-gradient(#2c2c2c 1px,transparent 1px);background-size:24px 24px}
+#wires{position:absolute;left:0;top:0;width:2400px;height:2400px;z-index:1;pointer-events:none}
+.card{position:absolute;width:190px;border:1px solid #3a3a3a;border-radius:14px;background:#141414;overflow:hidden;z-index:2}
+.card.sel{border-color:#fff;box-shadow:0 0 0 2px #fff}
+.ch{touch-action:none;background:#222;padding:8px 10px;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.12em;color:#bbb}
+.cb{padding:10px}
+.cb h3{margin:0 0 6px;font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:21px;line-height:1.05;text-transform:uppercase}
+.cb p{margin:0;color:var(--mut);font-size:10px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:120px;overflow:hidden}
+
+/* SHEET */
+#sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);display:none;align-items:flex-end}
+#sheet.on{display:flex}
+#sheet .in{width:100%;background:var(--fg);color:#000;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + var(--sab))}
+#sheet input,#sheet textarea{width:100%;border:0;border-bottom:2px solid #000;background:none;font:inherit;font-size:14px;padding:8px 0;margin-bottom:12px;outline:none;color:#000}
+#sheet textarea{height:140px;resize:none;border:2px solid #000;padding:8px}
+.row{display:flex;gap:8px}
+#sheet .btn{border-color:#000;color:#000}
+#sheet .btn.inv{background:#000;color:#fff}
+
+/* MUSIC */
+.pad{padding:18px 14px 340px}
+.mh{font-size:46px;line-height:1;margin:0 0 14px}
+.add{display:grid;gap:8px;margin-bottom:16px}
+.add input{background:#141414;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:12px;padding:12px;border-radius:12px;outline:none}
+.trk{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;background:#141414;padding:10px 12px;margin-bottom:8px}
+.trk.play{background:var(--fg);color:#000}
+.trk .t{flex:1;min-width:0}
+.trk b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trk small{font-size:9px;letter-spacing:.14em;color:var(--mut)}
+.trk.play small{color:#444}
+.trk button{background:none;border:1px solid currentColor;color:inherit;font:inherit;width:34px;height:34px;border-radius:50%}
+.empty{color:var(--mut);font-size:11px;line-height:1.7;padding:20px 0}
+
+/* DOCK (persistent player) */
+#dock{position:fixed;z-index:20;right:12px;bottom:calc(66px + var(--sab));border:1px solid var(--fg);border-radius:14px;overflow:hidden;background:#000;display:none;width:260px;height:82px}
+#dock.on{display:block}
+#dock iframe{width:100%;height:100%;border:0}
+#dock[data-kind=YOUTUBE]:not(.full){width:200px;height:113px}
+#dock.full{left:12px;width:auto}
+#dock.full[data-kind=YOUTUBE]{height:min(56vw,300px)}
+#dock.full[data-kind=SPOTIFY]{height:152px}
+#dock.full[data-kind=SOUNDCLOUD]{height:166px}
+</style>
+</head>
+<body>
+
+<header id="top"><span>LUMIM</span><span><i></i>BY V</span></header>
+
+<!-- HOME -->
+<section class="view active" id="home">
+  <div class="hero">
+    <small><span>NOTES</span><i></i><span>EST. 2026</span></small>
+    <h1 class="disp">Lumim</h1>
+    <div class="seg"><span class="on">CARDS</span><span class="on">LINKS</span><span>MUSIC</span></div>
+    <div class="notch"><div><img class="lf-img" src="leaf.png" alt=""></div></div>
+  </div>
+  <p class="tag">REMEMBER EVERYTHING.<br>CONNECT IDEAS.<br>PLAY WHAT YOU LOVE.</p>
+  <div class="year" id="year"></div>
+  <div class="stats">
+    <div class="tk"><div class="bar"><span>LUMIM</span><span>01</span></div><div class="n disp" id="sN">0</div><div class="l">NOTES</div></div>
+    <div class="tk"><div class="bar"><span>LUMIM</span><span>02</span></div><div class="n disp" id="sL">0</div><div class="l">LINKS</div></div>
+    <div class="tk"><div class="bar"><span>LUMIM</span><span>03</span></div><div class="n disp" id="sT">0</div><div class="l">TRACKS</div></div>
+  </div>
+  <div class="code"></div>
+  <div class="bk"><button class="btn" id="bkCopy">COPY BACKUP</button><button class="btn" id="bkRestore">RESTORE</button></div>
+  <div class="foot"><span>LUMIM</span><div><img class="lf-img" src="leaf.png" alt=""></div><span>BY V</span></div>
+</section>
+
+<!-- BOARD -->
+<section class="view" id="board">
+  <div class="tools">
+    <button class="btn inv" id="addCard">+ CARD</button>
+    <button class="btn" id="linkBtn">LINK</button>
+    <span class="hint" id="hint">DRAG HEADER TO MOVE<br>TAP CARD TO EDIT</span>
+  </div>
+  <div class="bscroll" id="bscroll">
+    <div id="canvas"><svg id="wires"></svg></div>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="view" id="music">
+  <div class="pad">
+    <h2 class="mh disp">Music</h2>
+    <div class="add">
+      <input id="mUrl" placeholder="Paste a YouTube, Spotify or SoundCloud link" inputmode="url" autocomplete="off">
+      <input id="mTitle" placeholder="Title (optional)" autocomplete="off">
+      <div class="row"><button class="btn inv" id="mAdd">ADD TRACK</button><button class="btn" id="mStop">STOP</button></div>
+    </div>
+    <div id="tracks"></div>
+  </div>
+</section>
+
+<div id="dock" data-kind=""><iframe id="frame" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+
+<nav id="nav">
+  <button class="on" data-v="home">HOME</button>
+  <button data-v="board">BOARD</button>
+  <button data-v="music">MUSIC</button>
+</nav>
+
+<!-- EDIT SHEET -->
+<div id="sheet"><div class="in">
+  <input id="sTitle" placeholder="TITLE" autocomplete="off">
+  <textarea id="sBody" placeholder="Write your note..."></textarea>
+  <div class="row"><button class="btn inv" id="sSave">SAVE</button><button class="btn" id="sDel">DELETE</button><button class="btn" id="sClose">CLOSE</button></div>
+</div></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const KEY = 'lumim.v1';
+let S = { cards: [], links: [], tracks: [] };
+try { S = Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+const save = () => { localStorage.setItem(KEY, JSON.stringify(S)); stats(); };
+const uid = () => Math.random().toString(36).slice(2, 9);
+const pad = n => String(n).padStart(2, '0');
+const card = id => S.cards.find(c => c.id === id);
+let view = 'home', linking = false, sel = null, editing = null, playing = null;
+
+function stats() {
+  $('#sN').textContent = S.cards.length;
+  $('#sL').textContent = S.links.length;
+  $('#sT').textContent = S.tracks.length;
+}
+$('#year').textContent = new Date().getFullYear();
+
+/* NAV */
+function go(v) {
+  view = v;
+  document.querySelectorAll('.view').forEach(e => e.classList.toggle('active', e.id === v));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('#dock').classList.toggle('full', v === 'music');
+  if (v === 'board') drawLinks();
+}
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.v));
+
+/* BOARD */
+const cv = $('#canvas'), W = 2400;
+function renderBoard() {
+  cv.querySelectorAll('.card').forEach(e => e.remove());
+  S.cards.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'card' + (sel === c.id ? ' sel' : '');
+    el.dataset.id = c.id;
+    el.style.left = c.x + 'px';
+    el.style.top = c.y + 'px';
+    el.innerHTML = '<div class="ch"><span>NOTE ' + pad(i + 1) + '</span><span>&#9702; LUMIM</span></div><div class="cb"><h3></h3><p></p></div>';
+    el.querySelector('h3').textContent = c.title || 'UNTITLED';
+    el.querySelector('p').textContent = c.body || '';
+    cv.appendChild(el);
+  });
+  drawLinks();
+}
+function drawLinks() {
+  const svg = $('#wires'), NS = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+  S.links.forEach(l => {
+    const a = cv.querySelector('[data-id="' + l.a + '"]'), b = cv.querySelector('[data-id="' + l.b + '"]');
+    if (!a || !b) return;
+    const ax = a.offsetLeft + a.offsetWidth / 2, ay = a.offsetTop + a.offsetHeight / 2;
+    const bx = b.offsetLeft + b.offsetWidth / 2, by = b.offsetTop + b.offsetHeight / 2;
+    const mx = (ax + bx) / 2, my = (ay + by) / 2;
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', 'M' + ax + ' ' + ay + ' C' + mx + ' ' + ay + ' ' + mx + ' ' + by + ' ' + bx + ' ' + by);
+    p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', '#f4f4f2');
+    p.setAttribute('stroke-width', '1.5');
+    svg.appendChild(p);
+    const d = document.createElementNS(NS, 'circle');
+    d.setAttribute('cx', mx); d.setAttribute('cy', my); d.setAttribute('r', 8);
+    d.setAttribute('fill', '#f4f4f2');
+    d.style.pointerEvents = 'all';
+    d.onclick = () => {
+      if (confirm('Remove this connector?')) { S.links = S.links.filter(x => x !== l); save(); drawLinks(); }
+    };
+    svg.appendChild(d);
+  });
+}
+
+let drag = null, moved = false;
+cv.addEventListener('pointerdown', e => {
+  const h = e.target.closest('.ch'); if (!h) return;
+  const el = h.parentElement, c = card(el.dataset.id);
+  drag = { el, c, sx: e.clientX, sy: e.clientY, ox: c.x, oy: c.y };
+  moved = false;
+  h.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+  if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+  drag.c.x = Math.max(0, Math.min(W - 200, drag.ox + dx));
+  drag.c.y = Math.max(0, Math.min(W - 200, drag.oy + dy));
+  drag.el.style.left = drag.c.x + 'px';
+  drag.el.style.top = drag.c.y + 'px';
+  drawLinks();
+});
+const endDrag = () => { if (drag) { save(); drag = null; setTimeout(() => moved = false, 60); } };
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+cv.addEventListener('click', e => {
+  if (moved) return;
+  const el = e.target.closest('.card'); if (!el) return;
+  const c = card(el.dataset.id);
+  if (!linking) { openSheet(c); return; }
+  if (!sel) { sel = c.id; renderBoard(); return; }
+  if (sel !== c.id && !S.links.some(l => (l.a === sel && l.b === c.id) || (l.a === c.id && l.b === sel))) {
+    S.links.push({ a: sel, b: c.id }); save();
+  }
+  sel = null; renderBoard();
+});
+
+$('#addCard').onclick = () => {
+  const bs = $('#bscroll');
+  const c = { id: uid(), x: Math.round(bs.scrollLeft + 20 + Math.random() * 60), y: Math.round(bs.scrollTop + 20 + Math.random() * 60), title: '', body: '' };
+  S.cards.push(c); save(); renderBoard(); openSheet(c);
+};
+$('#linkBtn').onclick = () => {
+  linking = !linking; sel = null;
+  $('#linkBtn').classList.toggle('on', linking);
+  $('#hint').innerHTML = linking ? 'TAP TWO CARDS<br>TO CONNECT THEM' : 'DRAG HEADER TO MOVE<br>TAP CARD TO EDIT';
+  renderBoard();
+};
+
+/* SHEET */
+function openSheet(c) {
+  editing = c.id;
+  $('#sTitle').value = c.title; $('#sBody').value = c.body;
+  $('#sheet').classList.add('on');
+}
+const closeSheet = () => { $('#sheet').classList.remove('on'); editing = null; };
+$('#sSave').onclick = () => {
+  const c = card(editing); if (!c) return closeSheet();
+  c.title = $('#sTitle').value.trim(); c.body = $('#sBody').value;
+  save(); closeSheet(); renderBoard();
+};
+$('#sDel').onclick = () => {
+  if (!confirm('Delete this card?')) return;
+  S.cards = S.cards.filter(x => x.id !== editing);
+  S.links = S.links.filter(l => l.a !== editing && l.b !== editing);
+  save(); closeSheet(); renderBoard();
+};
+$('#sClose').onclick = closeSheet;
+
+/* MUSIC */
+function parse(u) {
+  u = u.trim(); let m;
+  if (m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{11})/))
+    return { kind: 'YOUTUBE', src: 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) };
+  if (m = u.match(/youtube\.com\/.*[?&]list=([\w-]+)/))
+    return { kind: 'YOUTUBE', src: 'https://www.youtube.com/embed/videoseries?list=' + m[1] + '&autoplay=1&playsinline=1&origin=' + encodeURIComponent(location.origin) };
+  if (m = u.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode|show|artist)\/(\w+)/))
+    return { kind: 'SPOTIFY', src: 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] };
+  if (/soundcloud\.com\//.test(u))
+    return { kind: 'SOUNDCLOUD', src: 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(u) + '&auto_play=true&visual=false' };
+  return null;
+}
+async function getTitle(u, kind) {
+  const ep = { YOUTUBE: 'https://www.youtube.com/oembed?format=json&url=', SPOTIFY: 'https://open.spotify.com/oembed?url=', SOUNDCLOUD: 'https://soundcloud.com/oembed?format=json&url=' }[kind];
+  try { const r = await fetch(ep + encodeURIComponent(u)); const j = await r.json(); return j.title || null; } catch (e) { return null; }
+}
+$('#mAdd').onclick = async () => {
+  const url = $('#mUrl').value.trim(); if (!url) return;
+  const p = parse(url);
+  if (!p) { alert('Paste a YouTube, Spotify or SoundCloud link.'); return; }
+  const btn = $('#mAdd'); btn.textContent = 'ADDING...';
+  const title = $('#mTitle').value.trim() || await getTitle(url, p.kind) || (p.kind + ' TRACK');
+  S.tracks.push({ id: uid(), url, title, kind: p.kind, src: p.src });
+  save(); $('#mUrl').value = ''; $('#mTitle').value = ''; btn.textContent = 'ADD TRACK';
+  renderTracks();
+};
+function renderTracks() {
+  const box = $('#tracks'); box.innerHTML = '';
+  if (!S.tracks.length) { box.innerHTML = '<div class="empty">NO TRACKS YET.<br>PASTE A LINK ABOVE TO START.</div>'; return; }
+  S.tracks.forEach((t, i) => {
+    const r = document.createElement('div');
+    r.className = 'trk' + (playing === t.id ? ' play' : '');
+    r.innerHTML = '<span class="disp" style="font-size:22px;width:30px">' + pad(i + 1) + '</span><div class="t"><b></b><small>' + t.kind + '</small></div><button class="pl">' + (playing === t.id ? '&#9632;' : '&#9654;') + '</button><button class="rm">&times;</button>';
+    r.querySelector('b').textContent = t.title;
+    r.querySelector('.pl').onclick = () => playing === t.id ? stop() : play(t.id);
+    r.querySelector('.rm').onclick = () => {
+      if (!confirm('Remove this track?')) return;
+      if (playing === t.id) stop();
+      S.tracks = S.tracks.filter(x => x.id !== t.id); save(); renderTracks();
+    };
+    box.appendChild(r);
+  });
+}
+function play(id) {
+  const t = S.tracks.find(x => x.id === id); if (!t) return;
+  playing = id;
+  const d = $('#dock'); d.dataset.kind = t.kind;
+  $('#frame').src = t.src;
+  d.classList.add('on'); d.classList.toggle('full', view === 'music');
+  renderTracks();
+}
+function stop() {
+  playing = null; $('#frame').src = 'about:blank';
+  $('#dock').classList.remove('on'); renderTracks();
+}
+$('#mStop').onclick = stop;
+
+/* BACKUP */
+$('#bkCopy').onclick = async () => {
+  const j = JSON.stringify(S);
+  try { await navigator.clipboard.writeText(j); alert('Backup copied.'); }
+  catch (e) { prompt('Copy your backup:', j); }
+};
+$('#bkRestore').onclick = () => {
+  const j = prompt('Paste your backup JSON:'); if (!j) return;
+  try {
+    const d = JSON.parse(j);
+    if (!Array.isArray(d.cards)) throw 0;
+    S = { cards: d.cards || [], links: d.links || [], tracks: d.tracks || [] };
+    save(); renderBoard(); renderTracks(); alert('Backup restored.');
+  } catch (e) { alert('Invalid backup.'); }
+};
+
+/* BACKGROUND PLAYBACK (native foreground service) */
+let bgOn = false;
+function bg() {
+  if (bgOn) return;
+  const b = window.cordova && cordova.plugins && cordova.plugins.backgroundMode;
+  if (!b) return;
+  bgOn = true;
+  try {
+    b.setDefaults({ title: 'Lumim', text: 'Music is playing', icon: 'ic_launcher', color: '000000', hidden: false, silent: false });
+    b.enable();
+    b.on('activate', () => b.disableWebViewOptimizations());
+  } catch (e) {}
+}
+document.addEventListener('deviceready', bg);
+window.addEventListener('load', () => setTimeout(bg, 1500));
+
+stats(); renderBoard(); renderTracks();
+</script>
+</body>
+</html>
