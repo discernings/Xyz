@@ -13,7 +13,7 @@
 :root{--bg:#050505;--fg:#f4f4f2;--mut:#8a8a8a;--line:#2a2a2a;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:'Space Mono',ui-monospace,monospace;font-size:12px;overscroll-behavior:none}
 .disp{font-family:'Anton','Impact',sans-serif;font-weight:400;text-transform:uppercase}
-svg.lf{width:100%;height:100%;display:block}
+.lf-img{width:100%;height:100%;object-fit:contain;filter:invert(1);display:block}
 
 #top{position:fixed;top:0;left:0;right:0;z-index:30;height:calc(40px + var(--sat));padding:var(--sat) 14px 0;display:flex;justify-content:space-between;align-items:center;background:#161616;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.12em}
 #top span{display:flex;align-items:center;gap:6px}
@@ -37,7 +37,7 @@ svg.lf{width:100%;height:100%;display:block}
 .seg span{padding:5px 12px}
 .seg .on{background:#000;color:#fff}
 .notch{position:absolute;left:50%;bottom:-42px;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;background:#000;box-shadow:0 0 0 10px var(--bg);display:grid;place-items:center;color:#fff}
-.notch div{width:46px;height:46px}
+.notch div{width:40px;height:40px}
 .tag{text-align:center;margin:64px 24px 0;font-size:11px;letter-spacing:.06em;line-height:1.7}
 .year{font-family:'Anton',Impact,sans-serif;font-size:34vw;line-height:1;padding:0 18px;margin-top:28px;white-space:nowrap;background:linear-gradient(90deg,#fff 0%,#555 68%,rgba(255,255,255,.05));-webkit-background-clip:text;background-clip:text;color:transparent}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px 14px 10px}
@@ -48,7 +48,7 @@ svg.lf{width:100%;height:100%;display:block}
 .code{height:26px;margin:4px 14px 0;background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 5px,#fff 5px 6px,transparent 6px 10px);opacity:.8}
 .bk{display:flex;gap:8px;padding:16px 14px}
 .foot{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 24px;font-size:10px;letter-spacing:.14em;color:var(--mut)}
-.foot div{width:20px;height:20px;color:var(--fg)}
+.foot div{width:20px;height:20px}
 
 .btn{background:none;border:1px solid var(--fg);color:var(--fg);font:inherit;font-size:10px;letter-spacing:.14em;padding:9px 12px;flex:1}
 .btn.on,.btn.inv{background:var(--fg);color:#000}
@@ -104,8 +104,6 @@ svg.lf{width:100%;height:100%;display:block}
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute"><symbol id="leaf" viewBox="0 0 1024 1024"><g fill="none" stroke="currentColor" stroke-width="40" stroke-linejoin="round" stroke-linecap="round"><path d="M512 150C720 300 800 520 512 860 224 520 304 300 512 150Z"/><path d="M512 150V930M512 620L690 450M512 620L334 450M512 440L630 330M512 440L394 330"/></g></symbol></svg>
-
 <header id="top"><span>LUMIM</span><span><i></i>BY V</span></header>
 
 <!-- HOME -->
@@ -114,7 +112,7 @@ svg.lf{width:100%;height:100%;display:block}
     <small><span>NOTES</span><i></i><span>EST. 2026</span></small>
     <h1 class="disp">Lumim</h1>
     <div class="seg"><span class="on">CARDS</span><span class="on">LINKS</span><span>MUSIC</span></div>
-    <div class="notch"><div><svg class="lf"><use href="#leaf"/></svg></div></div>
+    <div class="notch"><div><img class="lf-img" src="leaf.png" alt=""></div></div>
   </div>
   <p class="tag">REMEMBER EVERYTHING.<br>CONNECT IDEAS.<br>PLAY WHAT YOU LOVE.</p>
   <div class="year" id="year"></div>
@@ -125,7 +123,7 @@ svg.lf{width:100%;height:100%;display:block}
   </div>
   <div class="code"></div>
   <div class="bk"><button class="btn" id="bkCopy">COPY BACKUP</button><button class="btn" id="bkRestore">RESTORE</button></div>
-  <div class="foot"><span>LUMIM</span><div><svg class="lf"><use href="#leaf"/></svg></div><span>BY V</span></div>
+  <div class="foot"><span>LUMIM</span><div><img class="lf-img" src="leaf.png" alt=""></div><span>BY V</span></div>
 </section>
 
 <!-- BOARD -->
@@ -147,7 +145,7 @@ svg.lf{width:100%;height:100%;display:block}
     <div class="add">
       <input id="mUrl" placeholder="Paste a YouTube, Spotify or SoundCloud link" inputmode="url" autocomplete="off">
       <input id="mTitle" placeholder="Title (optional)" autocomplete="off">
-      <div class="row" style="display:flex;gap:8px"><button class="btn inv" id="mAdd">ADD TRACK</button><button class="btn" id="mStop">STOP</button></div>
+      <div class="row"><button class="btn inv" id="mAdd">ADD TRACK</button><button class="btn" id="mStop">STOP</button></div>
     </div>
     <div id="tracks"></div>
   </div>
